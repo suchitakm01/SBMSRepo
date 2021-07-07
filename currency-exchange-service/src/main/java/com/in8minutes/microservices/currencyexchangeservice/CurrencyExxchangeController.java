@@ -13,12 +13,31 @@ public class CurrencyExxchangeController {
 	
 	@Autowired
 	private Environment env;
+	
+	@Autowired
+	private CurrencyExchangeRepository currencyExchangeRepo;
+	
+	
+//	@GetMapping("/currency-exchange/from/{from}/to/{to}")
+//	public CurrencyExxchange getCurrencyExchange(
+//			@PathVariable String from,
+//			@PathVariable String to) {
+//		CurrencyExxchange currencyExxchange = new CurrencyExxchange(1000l, from, to, BigDecimal.valueOf(75));
+//		currencyExxchange.setEnvironment(env.getProperty("local.server.port"));
+//		return currencyExxchange;
+//	}
+	
 	@GetMapping("/currency-exchange/from/{from}/to/{to}")
-	public CurrencyExxchange getCurrencyExchange(
+	public CurrencyExchange getCurrencyExchange(
 			@PathVariable String from,
 			@PathVariable String to) {
-		CurrencyExxchange currencyExxchange = new CurrencyExxchange(1000l, from, to, BigDecimal.valueOf(75));
-		currencyExxchange.setEnvironment(env.getProperty("local.server.port"));
-		return currencyExxchange;
+		CurrencyExchange currencyExchange = currencyExchangeRepo.findByFromAndTo(from, to);
+		if(currencyExchange == null) {
+			throw new RuntimeException("Unable to find data for "+from+" to "+to);
+		}
+		
+		currencyExchange.setEnvironment(env.getProperty("local.server.port"));
+		
+		return currencyExchange;
 	}
 }
